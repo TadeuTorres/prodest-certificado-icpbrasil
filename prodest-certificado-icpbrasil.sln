@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6AB15A9A-E55C-4563-AE84-7ADED6795580}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Tests\UnitTests\UnitTests.csproj", "{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prodest.Certificado.ICPBrasil", "Prodest.Certificado.ICPBrasil\Prodest.Certificado.ICPBrasil.csproj", "{2E6F8B15-497C-43F8-AC33-589F5260A2E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E6F8B15-497C-43F8-AC33-589F5260A2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E6F8B15-497C-43F8-AC33-589F5260A2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E6F8B15-497C-43F8-AC33-589F5260A2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E6F8B15-497C-43F8-AC33-589F5260A2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6733AEA6-FC09-452A-8B3C-AE8498F7D9FD} = {6AB15A9A-E55C-4563-AE84-7ADED6795580}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF6C6592-78DE-4430-BB72-FB62EE50FE0D}
+	EndGlobalSection
+EndGlobal
