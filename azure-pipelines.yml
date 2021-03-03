@@ -93,5 +93,5 @@ stages:
           command: 'push'
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
           nuGetFeedType: 'external'
-          publishFeedCredentials: 'NugetHealthCheck'
+          publishFeedCredentials: 'NugetCertificadoIcpBrasil'
         name: Push
