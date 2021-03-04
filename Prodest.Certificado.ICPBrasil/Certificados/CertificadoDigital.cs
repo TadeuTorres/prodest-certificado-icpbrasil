@@ -1,23 +1,14 @@
-﻿using Prodest.Certificado.ICPBrasil.Dates;
-using System;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Prodest.Certificado.ICPBrasil.Certificados
 {
     public class CertificadoDigitalOptions
     {
-        public CertificadoDigitalOptions(ICertificateDateTimeService certificateDateTimeService)
-        {
-            CertificateDateTimeService = certificateDateTimeService ?? throw new ArgumentNullException(nameof(certificateDateTimeService));
-        }
-
         public bool ValidarCadeia { get; set; } = true;
 
-        public bool ValidarExpiracao { get; set; } = true;
-
         public bool ValidarRevogacao { get; set; } = true;
-
-        public ICertificateDateTimeService CertificateDateTimeService { get; }
     }
 
     public sealed class CertificadoDigital
@@ -48,11 +39,8 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         private const string OidPjNomeEmpresarial = "2.16.76.1.3.8";
 
         public TipoCertificado TipoCertificado { get; }
-        private DateTime ValidoAPartir { get; }
-        private DateTime ValidoAte { get; }
         public bool IcpBrasil { get; }
         public bool CadeiaValida { get; }
-        private bool PeriodoValido { get; }
         public PessoaFisica? PessoaFisica { get; }
         public PessoaJuridica? PessoaJuridica { get; }
         public string RawCertDataString { get; }
@@ -61,19 +49,11 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         {
             try
             {
-                ValidoAPartir = certificado.NotBefore;
-                ValidoAte = certificado.NotAfter;
-                var agora = options.CertificateDateTimeService.GetUtcNow();
-                PeriodoValido = agora > ValidoAPartir && agora < ValidoAte;
                 RawCertDataString = certificado.GetRawCertDataString();
             }
             catch
             {
                 throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CertificadoInvalido);
-            }
-            if (options.ValidarExpiracao && !PeriodoValido)
-            {
-                throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CertificadoExpirado);
             }
 
             if (options.ValidarCadeia)
@@ -97,6 +77,10 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                     if (chain.Build(certificado))
                     {
                         CadeiaValida = true;
+                    }
+                    else if (chain.ChainStatus.Any(x => x.Status == X509ChainStatusFlags.NotTimeValid))
+                    {
+                        throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CertificadoExpirado);
                     }
 
                     var certificadoRaiz = chain.ChainElements[^1].Certificate;
@@ -229,7 +213,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
             var cnpj = string.Empty;
             var inss = string.Empty;
             var razaoSocial = string.Empty;
-            var nomeReponsavel = string.Empty;
+            var nomeResponsavel = string.Empty;
             var dadosResponsavel = string.Empty;
             var email = string.Empty;
 
@@ -252,13 +236,13 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                          && helper.TagList[i].TagId != TagId.OctetString
                          && helper.TagList[i].TagId != TagId.Utf8String
                          && helper.TagList[i].TagId != TagId.PrintableString);
-                SetarInformacao(ref cnpj, ref inss, ref razaoSocial, ref nomeReponsavel, ref dadosResponsavel, helper.TagList[i].Format(extensao), oid);
+                SetarInformacao(ref cnpj, ref inss, ref razaoSocial, ref nomeResponsavel, ref dadosResponsavel, helper.TagList[i].Format(extensao), oid);
             }
             if (string.IsNullOrEmpty(razaoSocial))
             {
                 razaoSocial = razaoSocialCn;
             }
-            return (new PessoaJuridica(cnpj, inss, razaoSocial), new PessoaFisica(nomeReponsavel, dadosResponsavel, email));
+            return (new PessoaJuridica(cnpj, inss, razaoSocial), new PessoaFisica(nomeResponsavel, dadosResponsavel, email));
         }
 
         private static void SetarInformacao(ref string cnpj, ref string inss, ref string razaoSocial, ref string nomeResponsavel, ref string dadosResponsavel, string informacao, string oid)

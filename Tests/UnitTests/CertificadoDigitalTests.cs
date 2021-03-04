@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-using NSubstitute;
 using Prodest.Certificado.ICPBrasil.Certificados;
-using Prodest.Certificado.ICPBrasil.Dates;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -17,9 +15,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.ECnpj);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
             };
@@ -36,9 +32,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.ECpf);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             var result = CertificadoDigital.Processar(certificado, options);
@@ -52,9 +46,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileAles);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             var result = CertificadoDigital.Processar(certificado, options);
@@ -68,9 +60,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileAles);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
             };
@@ -87,9 +77,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileAles);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarRevogacao = false
             };
@@ -107,9 +95,7 @@ namespace UnitTests
             // arrange
             var certificadoBuffer = ObterCertificado(CertificadoTipo.ECnpj);
             using var certificado = new X509Certificate2(certificadoBuffer);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2021, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
             };
@@ -126,11 +112,8 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileTrtExpirado);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
-                ValidarExpiracao = false,
                 ValidarCadeia = false
             };
 
@@ -147,9 +130,7 @@ namespace UnitTests
             // arrange
             File.Exists(SelfSignedPath).Should().BeTrue();
             using var certificado = new X509Certificate2(SelfSignedPath, SelfSignedPassword, X509KeyStorageFlags.EphemeralKeySet);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
             };
@@ -171,13 +152,7 @@ namespace UnitTests
         {
             // arrange
             using var certificado = new X509Certificate2(InfoconvPath);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
-            {
-                ValidarCadeia = false,
-                ValidarExpiracao = false
-            };
+            var options = new CertificadoDigitalOptions();
 
             // act
             var result = CertificadoDigital.Processar(certificado!, options);
@@ -193,9 +168,7 @@ namespace UnitTests
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileTrtExpirado);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             Action act = () => CertificadoDigital.Processar(certificado, options);
@@ -210,9 +183,7 @@ namespace UnitTests
         {
             // arrange
             using var certificado = new X509Certificate2(SelfSignedPath, SelfSignedPassword, X509KeyStorageFlags.EphemeralKeySet);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             // ReSharper disable once AccessToDisposedClosure
@@ -228,9 +199,7 @@ namespace UnitTests
         {
             // arrange
             using var certificado = new X509Certificate2();
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             // ReSharper disable once AccessToDisposedClosure
@@ -244,8 +213,7 @@ namespace UnitTests
         [Fact]
         public void FactoryCertificadoDigital_SemCertificadoBuffer_ShouldThrow()
         {
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             Action act = () => CertificadoDigital.Processar(buffer: null!, options);
@@ -258,8 +226,7 @@ namespace UnitTests
         [Fact]
         public void FactoryCertificadoDigital_SemCertificado_ShouldThrow()
         {
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            var options = new CertificadoDigitalOptions(dateTimeService);
+            var options = new CertificadoDigitalOptions();
 
             // act
             Action act = () => CertificadoDigital.Processar(certificado: null!, options);
@@ -267,20 +234,6 @@ namespace UnitTests
             // assert
             act.Should().Throw<ArgumentNullException>()
                 .And.Message.Should().Contain("certificado");
-        }
-
-        [Fact]
-        public void CertificadoDigitalOptions_SemIDateTimeService_ShouldThrow()
-        {
-            // act
-            // ReSharper disable once ObjectCreationAsStatement
-#pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new CertificadoDigitalOptions(null!);
-#pragma warning restore CA1806 // Do not ignore method results
-
-            // assert
-            act.Should().Throw<ArgumentNullException>()
-                .And.Message.Should().Contain("certificateDateTimeService");
         }
 
         #endregion Exceptions
@@ -291,8 +244,7 @@ namespace UnitTests
             // arrange
             var certificadoBuffer = ObterCertificado(CertificadoTipo.ArquivoTeste);
             using var certificado = new X509Certificate2(certificadoBuffer);
-            var dateTimeService = new CertificateDateTimeService();
-            var options = new CertificadoDigitalOptions(dateTimeService)
+            var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
             };
