@@ -15,7 +15,6 @@ namespace UnitTests.Context
 
         public static string SelfSignedPath => GetFilePath("SelfSigned.pfx");
 
-        public static string SiteReceitaPath => GetFilePath("siteReceitaExpirado.cer");
         public static string InfoconvPath => GetFilePath("infoconv.cer");
 
         public static byte[] ObterCertificado(CertificadoTipo tipo)

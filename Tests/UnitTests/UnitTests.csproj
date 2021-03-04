@@ -42,9 +42,6 @@
     <None Update="Context\SelfSigned.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\siteReceitaExpirado.cer">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Context\teste.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

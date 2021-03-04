@@ -167,26 +167,6 @@ namespace UnitTests
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_CertificadoSiteReceita_DeveFuncionar()
-        {
-            // arrange
-            using var certificado = new X509Certificate2(SiteReceitaPath);
-            var dateTimeService = Substitute.For<ICertificateDateTimeService>();
-            dateTimeService.GetUtcNow().Returns(new DateTime(2019, 06, 06));
-            var options = new CertificadoDigitalOptions(dateTimeService)
-            {
-                ValidarCadeia = false,
-                ValidarExpiracao = false
-            };
-
-            // act
-            var result = CertificadoDigital.Processar(certificado!, options);
-
-            // assert
-            result.Should().NotBeNull();
-        }
-
-        [Fact]
         public void FactoryCertificadoDigital_CertificadoInfoconv_DeveFuncionar()
         {
             // arrange
@@ -201,25 +181,6 @@ namespace UnitTests
 
             // act
             var result = CertificadoDigital.Processar(certificado!, options);
-
-            // assert
-            result.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void FactoryCertificadoDigital_ComArquivoTeste_DeveFuncionar()
-        {
-            // arrange
-            var certificadoBuffer = ObterCertificado(CertificadoTipo.ArquivoTeste);
-            using var certificado = new X509Certificate2(certificadoBuffer);
-            var dateTimeService = new CertificateDateTimeService();
-            var options = new CertificadoDigitalOptions(dateTimeService)
-            {
-                ValidarCadeia = false
-            };
-
-            // act
-            var result = CertificadoDigital.Processar(certificado, options);
 
             // assert
             result.Should().NotBeNull();
@@ -323,5 +284,24 @@ namespace UnitTests
         }
 
         #endregion Exceptions
+
+        [Fact]
+        public void FactoryCertificadoDigital_ComArquivoTeste_DeveFuncionar()
+        {
+            // arrange
+            var certificadoBuffer = ObterCertificado(CertificadoTipo.ArquivoTeste);
+            using var certificado = new X509Certificate2(certificadoBuffer);
+            var dateTimeService = new CertificateDateTimeService();
+            var options = new CertificadoDigitalOptions(dateTimeService)
+            {
+                ValidarCadeia = false
+            };
+
+            // act
+            var result = CertificadoDigital.Processar(certificado, options);
+
+            // assert
+            result.Should().NotBeNull();
+        }
     }
 }
