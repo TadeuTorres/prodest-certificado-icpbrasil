@@ -13,31 +13,31 @@ namespace UnitTests.Context
         // Só funciona no Windows 10 para frente, não roda se for 2012 ou anterior
         public static string SelfSignedPassword => "Qweasd123!@#";
 
-        public static string SelfSignedPath => GetFilePath("SelfSigned.pfx");
+        public static string SelfSignedPath => GetFilePath("Certificados/Outros/SelfSigned.pfx");
 
-        public static string InfoconvPath => GetFilePath("infoconv.cer");
+        public static string CnpjCerPath => GetFilePath("Certificados/Validos/cnpj.cer");
 
         public static byte[] ObterCertificado(CertificadoTipo tipo)
         {
             string path;
             switch (tipo)
             {
-                case CertificadoTipo.ECnpj:
+                case CertificadoTipo.ECnpjString:
                     return Convert.FromBase64String(ECnpj);
 
-                case CertificadoTipo.ECpf:
+                case CertificadoTipo.ECpfString:
                     return Convert.FromBase64String(ECpf);
 
-                case CertificadoTipo.FileAles:
-                    path = GetFilePath("ales.pdf");
+                case CertificadoTipo.FileECpfValido:
+                    path = GetFilePath("Certificados/Validos/cpf.pdf");
                     break;
 
-                case CertificadoTipo.FileTrtExpirado:
-                    path = GetFilePath("trtExpirado.pdf");
+                case CertificadoTipo.FileECpfExpirado:
+                    path = GetFilePath("Certificados/Expirados/cpf.pdf");
                     break;
 
                 case CertificadoTipo.ArquivoTeste:
-                    path = GetFilePath("teste.pdf");
+                    path = GetFilePath("Certificados/Outros/teste.pdf");
                     break;
 
                 default:
@@ -75,10 +75,10 @@ namespace UnitTests.Context
 
         public enum CertificadoTipo
         {
-            ECpf,
-            ECnpj,
-            FileAles,
-            FileTrtExpirado,
+            ECpfString,
+            ECnpjString,
+            FileECpfValido,
+            FileECpfExpirado,
             ArquivoTeste
         }
     }

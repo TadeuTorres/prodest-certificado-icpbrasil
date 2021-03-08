@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Context\ales.pdf">
+    <None Update="Context\Certificados\Validos\cpf.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Context\CAPA95277.pdf">
@@ -33,19 +33,19 @@
     <None Update="Context\cert.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\infoconv.cer">
+    <None Update="Context\Certificados\Validos\cnpj.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Context\raiz2.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\SelfSigned.pfx">
+    <None Update="Context\Certificados\Outros\SelfSigned.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\teste.pdf">
+    <None Update="Context\Certificados\Outros\teste.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\trtExpirado.pdf">
+    <None Update="Context\Certificados\Expirados\cpf.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

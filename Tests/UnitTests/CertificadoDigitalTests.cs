@@ -14,7 +14,7 @@ namespace UnitTests
         public void FactoryCertificadoDigital_ComECnpjEmBytes_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.ECnpj);
+            var certificado = ObterCertificado(CertificadoTipo.ECnpjString);
             var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
@@ -28,10 +28,10 @@ namespace UnitTests
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpf_DeveFuncionar()
+        public void FactoryCertificadoDigital_ComECpfEmBytes_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.ECpf);
+            var certificado = ObterCertificado(CertificadoTipo.ECpfString);
             var options = new CertificadoDigitalOptions();
 
             // act
@@ -42,10 +42,10 @@ namespace UnitTests
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfAles_DeveFuncionar()
+        public void FactoryCertificadoDigital_ComECpfValido_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileAles);
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
             var options = new CertificadoDigitalOptions();
 
             // act
@@ -59,7 +59,7 @@ namespace UnitTests
         public void FactoryCertificadoDigital_ComECpfSemValidarCadeia_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileAles);
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
             var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
@@ -76,7 +76,7 @@ namespace UnitTests
         public void FactoryCertificadoDigital_ComECpfSemValidarRevogacao_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileAles);
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
             var options = new CertificadoDigitalOptions()
             {
                 ValidarRevogacao = false
@@ -90,14 +90,13 @@ namespace UnitTests
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECnpjEmCertificado_DeveFuncionar()
+        public void FactoryCertificadoDigital_ComECnpjValido_DeveFuncionar()
         {
             // arrange
-            var certificadoBuffer = ObterCertificado(CertificadoTipo.ECnpj);
-            using var certificado = new X509Certificate2(certificadoBuffer);
+            using var certificado = new X509Certificate2(CnpjCerPath);
             var options = new CertificadoDigitalOptions()
             {
-                ValidarCadeia = false
+                ValidarCadeia = true
             };
 
             // act
@@ -111,7 +110,7 @@ namespace UnitTests
         public void FactoryCertificadoDigital_ComECpfExpiradoSemValidarExpiracao_DeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileTrtExpirado);
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfExpirado);
             var options = new CertificadoDigitalOptions()
             {
                 ValidarCadeia = false
@@ -147,27 +146,13 @@ namespace UnitTests
             result.RawCertDataString.Should().BeEquivalentTo(certificado.GetRawCertDataString());
         }
 
-        [Fact]
-        public void FactoryCertificadoDigital_CertificadoInfoconv_DeveFuncionar()
-        {
-            // arrange
-            using var certificado = new X509Certificate2(InfoconvPath);
-            var options = new CertificadoDigitalOptions();
-
-            // act
-            var result = CertificadoDigital.Processar(certificado!, options);
-
-            // assert
-            result.Should().NotBeNull();
-        }
-
         #region Exceptions
 
         [Fact]
         public void FactoryCertificadoDigital_ComECpfExpirado_NaoDeveFuncionar()
         {
             // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileTrtExpirado);
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfExpirado);
             var options = new CertificadoDigitalOptions();
 
             // act
