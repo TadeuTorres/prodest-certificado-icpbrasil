@@ -29,7 +29,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                 if (!string.IsNullOrEmpty(rgTemp))
                 {
                     Rg = rgTemp;
-                    OrgaoExpedidor = dados.Substring(45);
+                    OrgaoExpedidor = dados[45..];
                 }
                 else
                 {
