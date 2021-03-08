@@ -1,8 +1,8 @@
-﻿using System;
-using System.Globalization;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Prodest.Certificado.ICPBrasil.Certificados;
+using System;
+using System.Globalization;
 using Xunit;
 
 namespace UnitTests
@@ -24,6 +24,7 @@ namespace UnitTests
             result.DataNascimento.Should().Be(DateTime.ParseExact("27041971", "ddMMyyyy", CultureInfo.InvariantCulture));
             result.Cpf.Should().Be("01703925700");
             result.Email.Should().Be(email);
+
             result.Rg.Should().Be("1234567");
             result.OrgaoExpedidor.Should().Be("SPTCES");
         }
@@ -37,7 +38,10 @@ namespace UnitTests
             // ReSharper disable once ObjectCreationAsStatement
             // ReSharper disable once AccessToDisposedClosure
 #pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new PessoaFisica("", "qualquerCoisa", "qualquerEmail");
+            Action act = () => new PessoaFisica(
+                string.Empty
+                , "qualquerCoisa"
+                , "qualquerEmail");
 #pragma warning restore CA1806 // Do not ignore method results
 
             // assert
@@ -54,7 +58,10 @@ namespace UnitTests
             // ReSharper disable once ObjectCreationAsStatement
             // ReSharper disable once AccessToDisposedClosure
 #pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new PessoaFisica("qualquerNome", "", "qualquerEmail");
+            Action act = () => new PessoaFisica(
+                "qualquerNome"
+                , string.Empty
+                , "qualquerEmail");
 #pragma warning restore CA1806 // Do not ignore method results
 
             // assert

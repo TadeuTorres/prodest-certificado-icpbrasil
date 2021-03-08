@@ -8,8 +8,8 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         public string Nome { get; }
         public DateTime DataNascimento { get; }
         public string Cpf { get; }
-        public string? Rg { get; }
-        public string? OrgaoExpedidor { get; }
+        public string Rg { get; }
+        public string OrgaoExpedidor { get; }
         public string Email { get; }
 
         // http://www.iti.gov.br/images/repositorio/legislacao/documentos-principais/DOC-ICP-04_-_Versao_6.3_-_REQUISITOS_MINIMOS_PARA_P.C.pdf
@@ -29,7 +29,12 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                 if (!string.IsNullOrEmpty(rgTemp))
                 {
                     Rg = rgTemp;
-                    OrgaoExpedidor = dados.Substring(45);
+                    OrgaoExpedidor = dados[45..];
+                }
+                else
+                {
+                    Rg = string.Empty;
+                    OrgaoExpedidor = string.Empty;
                 }
                 Email = email;
             }
