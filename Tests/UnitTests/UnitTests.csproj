@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Context\Certificados\Validos\cpf.pdf">
+    <None Update="Context\Certificados\ListaParaValidar\Validos\cpf.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Context\CAPA95277.pdf">
@@ -33,7 +33,13 @@
     <None Update="Context\cert.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\Certificados\Validos\cnpj.cer">
+    <None Update="Context\Certificados\Outros\acessocidadao.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Context\Certificados\Outros\acessocidadaoComSenha.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Context\Certificados\Outros\cnpj.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Context\raiz2.cer">
@@ -42,10 +48,10 @@
     <None Update="Context\Certificados\Outros\SelfSigned.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\Certificados\Outros\teste.pdf">
+    <None Update="Context\Certificados\ListaParaValidar\Validos\teste.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\Certificados\Expirados\cpf.pdf">
+    <None Update="Context\Certificados\ListaParaValidar\Expirados\cpf.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

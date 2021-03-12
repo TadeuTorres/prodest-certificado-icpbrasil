@@ -3,6 +3,7 @@ using Prodest.Certificado.ICPBrasil.Certificados;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using UnitTests.Context;
 using Xunit;
 using static UnitTests.Context.CertificadoDigitalTestsContext;
 
@@ -224,21 +225,55 @@ namespace UnitTests
         #endregion Exceptions
 
         [Fact]
-        public void FactoryCertificadoDigital_ComArquivoTeste_DeveFuncionar()
+        public void FactoryCertificadoDigital_ComListaArquivoTeste_DeveFuncionar()
         {
             // arrange
-            var certificadoBuffer = ObterCertificado(CertificadoTipo.ArquivoTeste);
-            using var certificado = new X509Certificate2(certificadoBuffer);
-            var options = new CertificadoDigitalOptions()
+            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions();
+
+            foreach (var file in files.Validos)
             {
-                ValidarCadeia = false
-            };
+                if (file.EndsWith(".pdf"))
+                {
+                    var buffer = ObterCertificadoFromPdf(file);
+                    using var certificado = new X509Certificate2(buffer);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                }
+                else
+                {
+                    using var certificado = new X509Certificate2(file);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                }
+            }
 
-            // act
-            var result = CertificadoDigital.Processar(certificado, options);
+            options.ValidarCadeia = false;
 
-            // assert
-            result.Should().NotBeNull();
+            foreach (var file in files.Expirados)
+            {
+                if (file.EndsWith(".pdf"))
+                {
+                    var buffer = ObterCertificadoFromPdf(file);
+                    using var certificado = new X509Certificate2(buffer);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                }
+                else
+                {
+                    using var certificado = new X509Certificate2(file);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                }
+            }
         }
     }
 }

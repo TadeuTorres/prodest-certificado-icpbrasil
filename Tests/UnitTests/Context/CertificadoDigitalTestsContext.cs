@@ -15,7 +15,7 @@ namespace UnitTests.Context
 
         public static string SelfSignedPath => GetFilePath("Certificados/Outros/SelfSigned.pfx");
 
-        public static string CnpjCerPath => GetFilePath("Certificados/Validos/cnpj.cer");
+        public static string CnpjCerPath => GetFilePath("Certificados/Outros/cnpj.cer");
 
         public static byte[] ObterCertificado(CertificadoTipo tipo)
         {
@@ -29,21 +29,24 @@ namespace UnitTests.Context
                     return Convert.FromBase64String(ECpf);
 
                 case CertificadoTipo.FileECpfValido:
-                    path = GetFilePath("Certificados/Validos/cpf.pdf");
-                    break;
+                    path = GetFilePath("Certificados/ListaParaValidar/Validos/cpf.pdf");
+                    return ObterCertificadoFromPdf(path);
 
                 case CertificadoTipo.FileECpfExpirado:
-                    path = GetFilePath("Certificados/Expirados/cpf.pdf");
-                    break;
+                    path = GetFilePath("Certificados/ListaParaValidar/Expirados/cpf.pdf");
+                    return ObterCertificadoFromPdf(path);
 
                 case CertificadoTipo.ArquivoTeste:
-                    path = GetFilePath("Certificados/Outros/teste.pdf");
-                    break;
+                    path = GetFilePath("Certificados/ListaParaValidar/Validos/teste.pdf");
+                    return ObterCertificadoFromPdf(path);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tipo), tipo, null);
             }
+        }
 
+        public static byte[] ObterCertificadoFromPdf(string path)
+        {
             var reader = new PdfReader(path);
             var acroFields = reader.AcroFields;
             var signatures = acroFields.GetSignatureNames();
@@ -60,6 +63,26 @@ namespace UnitTests.Context
                 "Context",
                 fileName
                 );
+        }
+
+        public static (string[] Expirados, string[] Validos) GetListaParaValidar()
+        {
+            var assemblyDir = AssemblyDirectory;
+            var pathExpirados = Path.Combine(
+                assemblyDir,
+                "Context",
+                "Certificados",
+                "ListaParaValidar",
+                "Expirados"
+            );
+            var pathValidos = Path.Combine(
+                assemblyDir,
+                "Context",
+                "Certificados",
+                "ListaParaValidar",
+                "Validos"
+            );
+            return (Directory.GetFiles(pathExpirados), Directory.GetFiles(pathValidos));
         }
 
         private static string AssemblyDirectory
