@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -24,34 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Context\Certificados\ListaParaValidar\Validos\cpf.pdf">
+    <None Update="Context\Certificados\ListaParaValidar\Expirados\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\CAPA95277.pdf">
+    <None Update="Context\Certificados\ListaParaValidar\Validos\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Context\cert.cer">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\Outros\acessocidadao.cer">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\Outros\acessocidadaoComSenha.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\Outros\cnpj.cer">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\raiz2.cer">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\Outros\SelfSigned.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\ListaParaValidar\Validos\teste.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Context\Certificados\ListaParaValidar\Expirados\cpf.pdf">
+    <None Update="Context\Certificados\Outros\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
