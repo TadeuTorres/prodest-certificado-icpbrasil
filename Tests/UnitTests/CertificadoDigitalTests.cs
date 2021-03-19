@@ -251,10 +251,10 @@ namespace UnitTests
         public void CertificadoDigital_ComListaTesteValidos_DeveFuncionar()
         {
             // arrange
-            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var (_, validos, _) = CertificadoDigitalTestsContext.GetListaParaValidar();
             var options = new CertificadoDigitalOptions();
 
-            foreach (var file in files.Validos)
+            foreach (var file in validos)
             {
                 if (file.EndsWith(".pdf"))
                 {
@@ -282,11 +282,10 @@ namespace UnitTests
         public void CertificadoDigital_ComListaTesteExpiradosSemValidarRevogacao_DeveFuncionar()
         {
             // arrange
-            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
-            var options = new CertificadoDigitalOptions();
-            options.ValidarRevogacao = false;
+            var (expirados, _, _) = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions { ValidarRevogacao = false };
 
-            foreach (var file in files.Expirados)
+            foreach (var file in expirados)
             {
                 if (file.EndsWith(".pdf"))
                 {
@@ -314,10 +313,10 @@ namespace UnitTests
         public void CertificadoDigital_ComListaTesteExpirados_DeveDarErro()
         {
             // arrange
-            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var (expirados, _, _) = CertificadoDigitalTestsContext.GetListaParaValidar();
             var options = new CertificadoDigitalOptions();
 
-            foreach (var file in files.Expirados)
+            foreach (var file in expirados)
             {
                 if (file.EndsWith(".pdf"))
                 {
@@ -345,11 +344,10 @@ namespace UnitTests
         public void CertificadoDigital_ComListaTesteInvalidosSemValidarCadeia_DeveFuncionar()
         {
             // arrange
-            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
-            var options = new CertificadoDigitalOptions();
-            options.ValidarCadeia = false;
+            var (_, _, invalidos) = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions { ValidarCadeia = false };
 
-            foreach (var file in files.Invalidos)
+            foreach (var file in invalidos)
             {
                 if (file.EndsWith(".pdf"))
                 {
@@ -386,12 +384,10 @@ namespace UnitTests
         public void CertificadoDigital_ComListaTesteInvalidos_DeveDarErro()
         {
             // arrange
-            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
-            var options = new CertificadoDigitalOptions();
-            options.ValidarRevogacao = false;
-            options.ValidarRaizConfiavel = false;
+            var (_, _, invalidos) = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions { ValidarRevogacao = false, ValidarRaizConfiavel = false };
 
-            foreach (var file in files.Invalidos)
+            foreach (var file in invalidos)
             {
                 if (file.EndsWith(".pdf"))
                 {

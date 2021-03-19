@@ -37,12 +37,12 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         private const string OidPjNomeResponsavel = "2.16.76.1.3.2";
         private const string OidPjCnpj = "2.16.76.1.3.3";
         private const string OidPjDadosResponsavel = "2.16.76.1.3.4";
-        private const string OidPfTituloEleitor = "2.16.76.1.3.5";
-        private const string OidPfInss = "2.16.76.1.3.6";
         private const string OidPjInss = "2.16.76.1.3.7";
         private const string OidPjNomeEmpresarial = "2.16.76.1.3.8";
-        private const string OidPfRegistroIdentidadeCivil = "2.16.76.1.3.9";
-        private const string OidPfRegistroServidorRh = "2.16.76.1.3.11";
+        //private const string OidPfTituloEleitor = "2.16.76.1.3.5"
+        //private const string OidPfInss = "2.16.76.1.3.6"
+        //private const string OidPfRegistroIdentidadeCivil = "2.16.76.1.3.9"
+        //private const string OidPfRegistroServidorRh = "2.16.76.1.3.11"
 
         public TipoCertificado TipoCertificado { get; }
         public bool IcpBrasil { get; }
