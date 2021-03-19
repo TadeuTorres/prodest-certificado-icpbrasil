@@ -9,6 +9,8 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         public bool ValidarCadeia { get; set; } = true;
 
         public bool ValidarRevogacao { get; set; } = true;
+
+        public bool ValidarRaizConfiavel { get; set; } = true;
     }
 
     public sealed class CertificadoDigital
@@ -47,17 +49,23 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         public bool CadeiaValida { get; }
         public PessoaFisica? PessoaFisica { get; }
         public PessoaJuridica? PessoaJuridica { get; }
-        public string RawCertDataString { get; }
+        public string? RawCertDataString { get; }
+        public bool Erro { get; }
+        public string? ErroMensagem { get; }
 
         private CertificadoDigital(X509Certificate2 certificado, CertificadoDigitalOptions options)
         {
+            Erro = false;
+            TipoCertificado = TipoCertificado.Invalido;
             try
             {
                 RawCertDataString = certificado.GetRawCertDataString();
             }
             catch
             {
-                throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CertificadoInvalido);
+                Erro = true;
+                ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo.CertificadoInvalido);
+                return;
             }
 
             if (options.ValidarCadeia)
@@ -82,18 +90,34 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                     {
                         CadeiaValida = true;
                     }
-                    else if (chain.ChainStatus.Any(x => x.Status == X509ChainStatusFlags.NotTimeValid))
+                    else if (chain.ChainStatus.Any(x => x.Status == X509ChainStatusFlags.NotTimeValid) && options.ValidarRevogacao)
                     {
-                        throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CertificadoExpirado);
+                        ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                            .CertificadoExpirado);
+                        Erro = true;
+                        return;
+                    }
+                    else if (
+                        (options.ValidarRaizConfiavel && chain.ChainStatus.Any(x => x.Status != X509ChainStatusFlags.NotTimeValid))
+                        || (!options.ValidarRaizConfiavel && chain.ChainStatus.Any(x => x.Status != X509ChainStatusFlags.NotTimeValid
+                                                                                          && x.Status != X509ChainStatusFlags.UntrustedRoot)))
+                    {
+                        ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                            .CadeiaInvalida);
+                        Erro = true;
+                        return;
                     }
 
                     var certificadoRaiz = chain.ChainElements[^1].Certificate;
                     IcpBrasil = raizesIcpBrasil.Contains(certificadoRaiz);
                 }
 
-                if (!IcpBrasil || !CadeiaValida)
+                if (!IcpBrasil)
                 {
-                    throw new CertificadoException(CertificadoException.CertificadoExceptionTipo.CadeiaInvalida);
+                    ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                        .NaoEhICPBrasil);
+                    Erro = true;
+                    return;
                 }
             }
 
@@ -268,6 +292,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
     {
         ECpf,
         ECnpj,
-        Outro
+        Outro,
+        Invalido
     }
 }

@@ -11,6 +11,8 @@ namespace UnitTests.Context
         private const string ECnpj = "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";
 
         // Só funciona no Windows 10 para frente, não roda se for 2012 ou anterior
+        public static string PfxPassword => "1234";
+
         public static string SelfSignedPassword => "Qweasd123!@#";
 
         public static string SelfSignedPath => GetFilePath("Certificados/Outros/SelfSigned.pfx");
@@ -65,7 +67,7 @@ namespace UnitTests.Context
                 );
         }
 
-        public static (string[] Expirados, string[] Validos) GetListaParaValidar()
+        public static (string[] Expirados, string[] Validos, string[] Invalidos) GetListaParaValidar()
         {
             var assemblyDir = AssemblyDirectory;
             var pathExpirados = Path.Combine(
@@ -82,7 +84,14 @@ namespace UnitTests.Context
                 "ListaParaValidar",
                 "Validos"
             );
-            return (Directory.GetFiles(pathExpirados), Directory.GetFiles(pathValidos));
+            var pathInvalidos = Path.Combine(
+                assemblyDir,
+                "Context",
+                "Certificados",
+                "ListaParaValidar",
+                "Invalidos"
+            );
+            return (Directory.GetFiles(pathExpirados), Directory.GetFiles(pathValidos), Directory.GetFiles(pathInvalidos));
         }
 
         private static string AssemblyDirectory

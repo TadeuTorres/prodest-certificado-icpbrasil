@@ -12,7 +12,7 @@ namespace UnitTests
     public class CertificadoDigitalTests
     {
         [Fact]
-        public void FactoryCertificadoDigital_ComECnpjEmBytes_DeveFuncionar()
+        public void CertificadoDigital_ComECnpjEmBytes_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.ECnpjString);
@@ -26,10 +26,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfEmBytes_DeveFuncionar()
+        public void CertificadoDigital_ComECpfEmBytes_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.ECpfString);
@@ -40,10 +41,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfValido_DeveFuncionar()
+        public void CertificadoDigital_ComECpfValido_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
@@ -54,10 +56,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfSemValidarCadeia_DeveFuncionar()
+        public void CertificadoDigital_ComECpfSemValidarCadeia_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
@@ -71,10 +74,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfSemValidarRevogacao_DeveFuncionar()
+        public void CertificadoDigital_ComECpfSemValidarRevogacao_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileECpfValido);
@@ -88,10 +92,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECnpjValido_DeveFuncionar()
+        public void CertificadoDigital_ComECnpjValido_DeveFuncionar()
         {
             // arrange
             using var certificado = new X509Certificate2(CnpjCerPath);
@@ -105,16 +110,17 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfExpiradoSemValidarExpiracao_DeveFuncionar()
+        public void CertificadoDigital_ComECpfExpiradoSemValidarExpiracao_DeveFuncionar()
         {
             // arrange
             var certificado = ObterCertificado(CertificadoTipo.FileECpfExpirado);
             var options = new CertificadoDigitalOptions()
             {
-                ValidarCadeia = false
+                ValidarRevogacao = false
             };
 
             // act
@@ -122,10 +128,11 @@ namespace UnitTests
 
             // assert
             result.Should().NotBeNull();
+            result.Erro.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_CertificadoNaoIcpSemValidarCadeia_DeveFuncionar()
+        public void CertificadoDigital_CertificadoNaoIcpSemValidarCadeia_DeveFuncionar()
         {
             // arrange
             File.Exists(SelfSignedPath).Should().BeTrue();
@@ -140,6 +147,7 @@ namespace UnitTests
 
             // assert
             result.TipoCertificado.Should().Be(TipoCertificado.Outro);
+            result.Erro.Should().BeFalse();
             result.CadeiaValida.Should().BeFalse();
             result.IcpBrasil.Should().BeFalse();
             result.PessoaFisica.Should().BeNull();
@@ -147,57 +155,72 @@ namespace UnitTests
             result.RawCertDataString.Should().BeEquivalentTo(certificado.GetRawCertDataString());
         }
 
-        #region Exceptions
+        #region Erros
 
         [Fact]
-        public void FactoryCertificadoDigital_ComECpfExpirado_NaoDeveFuncionar()
-        {
-            // arrange
-            var certificado = ObterCertificado(CertificadoTipo.FileECpfExpirado);
-            var options = new CertificadoDigitalOptions();
-
-            // act
-            Action act = () => CertificadoDigital.Processar(certificado, options);
-
-            // assert
-            act.Should().Throw<CertificadoException>()
-                .And.TipoErro.Should().Be(CertificadoException.CertificadoExceptionTipo.CertificadoExpirado);
-        }
-
-        [Fact]
-        public void FactoryCertificadoDigital_CertificadoNaoIcp_ShouldThrow()
-        {
-            // arrange
-            using var certificado = new X509Certificate2(SelfSignedPath, SelfSignedPassword, X509KeyStorageFlags.EphemeralKeySet);
-            var options = new CertificadoDigitalOptions();
-
-            // act
-            // ReSharper disable once AccessToDisposedClosure
-            Action act = () => CertificadoDigital.Processar(certificado!, options);
-
-            // assert
-            act.Should().Throw<CertificadoException>()
-                .And.TipoErro.Should().Be(CertificadoException.CertificadoExceptionTipo.CadeiaInvalida);
-        }
-
-        [Fact]
-        public void FactoryCertificadoDigital_CertificadoInvalido_ShouldThrow()
+        public void CertificadoDigital_CertificadoInvalido_DeveRetornarTipoInvalido()
         {
             // arrange
             using var certificado = new X509Certificate2();
             var options = new CertificadoDigitalOptions();
 
             // act
-            // ReSharper disable once AccessToDisposedClosure
-            Action act = () => CertificadoDigital.Processar(certificado!, options);
+            var result = CertificadoDigital.Processar(certificado!, options);
 
             // assert
-            act.Should().Throw<CertificadoException>()
-                .And.TipoErro.Should().Be(CertificadoException.CertificadoExceptionTipo.CertificadoInvalido);
+            result.TipoCertificado.Should().Be(TipoCertificado.Invalido);
+            result.Erro.Should().BeTrue();
+            result.ErroMensagem.Should().NotBeNullOrEmpty();
+            result.PessoaJuridica.Should().BeNull();
+            result.PessoaFisica.Should().BeNull();
+            result.RawCertDataString.Should().BeNull();
+            result.CadeiaValida.Should().BeFalse();
+            result.IcpBrasil.Should().BeFalse();
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_SemCertificadoBuffer_ShouldThrow()
+        public void CertificadoDigital_ComECpfExpirado_DeveRetornarComErro()
+        {
+            // arrange
+            var certificado = ObterCertificado(CertificadoTipo.FileECpfExpirado);
+            var options = new CertificadoDigitalOptions();
+
+            // act
+            var result = CertificadoDigital.Processar(certificado, options);
+
+            // assert
+            result.TipoCertificado.Should().Be(TipoCertificado.Invalido);
+            result.Erro.Should().BeTrue();
+            result.ErroMensagem.Should().Be(CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo.CertificadoExpirado));
+            result.PessoaJuridica.Should().BeNull();
+            result.PessoaFisica.Should().BeNull();
+            result.CadeiaValida.Should().BeFalse();
+            result.IcpBrasil.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CertificadoDigital_CertificadoNaoIcp_DeveRetornarComErro()
+        {
+            // arrange
+            using var certificado = new X509Certificate2(SelfSignedPath, SelfSignedPassword, X509KeyStorageFlags.EphemeralKeySet);
+            var options = new CertificadoDigitalOptions();
+
+            // act
+            var result = CertificadoDigital.Processar(certificado!, options);
+
+            // assert
+            result.TipoCertificado.Should().Be(TipoCertificado.Invalido);
+            result.Erro.Should().BeTrue();
+            result.ErroMensagem.Should().NotBeNullOrEmpty();
+            result.PessoaJuridica.Should().BeNull();
+            result.PessoaFisica.Should().BeNull();
+            result.RawCertDataString.Should().NotBeNullOrEmpty();
+            result.CadeiaValida.Should().BeFalse();
+            result.IcpBrasil.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CertificadoDigital_SemCertificadoBuffer_ShouldThrow()
         {
             var options = new CertificadoDigitalOptions();
 
@@ -210,7 +233,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void FactoryCertificadoDigital_SemCertificado_ShouldThrow()
+        public void CertificadoDigital_SemCertificado_ShouldThrow()
         {
             var options = new CertificadoDigitalOptions();
 
@@ -222,10 +245,10 @@ namespace UnitTests
                 .And.Message.Should().Contain("certificado");
         }
 
-        #endregion Exceptions
+        #endregion Erros
 
         [Fact]
-        public void FactoryCertificadoDigital_ComListaArquivoTeste_DeveFuncionar()
+        public void CertificadoDigital_ComListaTesteValidos_DeveFuncionar()
         {
             // arrange
             var files = CertificadoDigitalTestsContext.GetListaParaValidar();
@@ -241,6 +264,7 @@ namespace UnitTests
                     var result = CertificadoDigital.Processar(certificado, options);
                     // assert
                     result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
                 }
                 else
                 {
@@ -249,10 +273,18 @@ namespace UnitTests
                     var result = CertificadoDigital.Processar(certificado, options);
                     // assert
                     result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
                 }
             }
+        }
 
-            options.ValidarCadeia = false;
+        [Fact]
+        public void CertificadoDigital_ComListaTesteExpiradosSemValidarRevogacao_DeveFuncionar()
+        {
+            // arrange
+            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions();
+            options.ValidarRevogacao = false;
 
             foreach (var file in files.Expirados)
             {
@@ -264,6 +296,7 @@ namespace UnitTests
                     var result = CertificadoDigital.Processar(certificado, options);
                     // assert
                     result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
                 }
                 else
                 {
@@ -272,6 +305,121 @@ namespace UnitTests
                     var result = CertificadoDigital.Processar(certificado, options);
                     // assert
                     result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
+                }
+            }
+        }
+
+        [Fact]
+        public void CertificadoDigital_ComListaTesteExpirados_DeveDarErro()
+        {
+            // arrange
+            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions();
+
+            foreach (var file in files.Expirados)
+            {
+                if (file.EndsWith(".pdf"))
+                {
+                    var buffer = ObterCertificadoFromPdf(file);
+                    using var certificado = new X509Certificate2(buffer);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeTrue();
+                }
+                else
+                {
+                    using var certificado = new X509Certificate2(file);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeTrue();
+                }
+            }
+        }
+
+        [Fact]
+        public void CertificadoDigital_ComListaTesteInvalidosSemValidarCadeia_DeveFuncionar()
+        {
+            // arrange
+            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions();
+            options.ValidarCadeia = false;
+
+            foreach (var file in files.Invalidos)
+            {
+                if (file.EndsWith(".pdf"))
+                {
+                    var buffer = ObterCertificadoFromPdf(file);
+                    using var certificado = new X509Certificate2(buffer);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
+                }
+                else if (file.EndsWith(".pfx"))
+                {
+                    using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
+                }
+                else
+                {
+                    using var certificado = new X509Certificate2(file);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeFalse();
+                }
+            }
+        }
+
+        [Fact]
+        public void CertificadoDigital_ComListaTesteInvalidos_DeveDarErro()
+        {
+            // arrange
+            var files = CertificadoDigitalTestsContext.GetListaParaValidar();
+            var options = new CertificadoDigitalOptions();
+            options.ValidarRevogacao = false;
+            options.ValidarRaizConfiavel = false;
+
+            foreach (var file in files.Invalidos)
+            {
+                if (file.EndsWith(".pdf"))
+                {
+                    var buffer = ObterCertificadoFromPdf(file);
+                    using var certificado = new X509Certificate2(buffer);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeTrue();
+                }
+                else if (file.EndsWith(".pfx"))
+                {
+                    using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeTrue();
+                }
+                else
+                {
+                    using var certificado = new X509Certificate2(file);
+                    // act
+                    var result = CertificadoDigital.Processar(certificado, options);
+                    // assert
+                    result.Should().NotBeNull();
+                    result.Erro.Should().BeTrue();
                 }
             }
         }

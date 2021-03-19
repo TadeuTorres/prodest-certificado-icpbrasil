@@ -30,6 +30,9 @@
     <None Update="Context\Certificados\ListaParaValidar\Validos\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Context\Certificados\ListaParaValidar\Invalidos\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Context\Certificados\Outros\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

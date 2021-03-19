@@ -56,3 +56,4 @@ bundle.css
 /Tests/UnitTests/Context/Certificados/ListaParaValidar/Validos/*
 !/Tests/UnitTests/Context/Certificados/ListaParaValidar/Validos/cpf.pdf
 !/Tests/UnitTests/Context/Certificados/ListaParaValidar/Validos/teste.pdf
+/Tests/UnitTests/Context/Certificados/ListaParaValidar/Invalidos/*

@@ -21,6 +21,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
             CertificadoExpirado,
             CertificadoInvalido,
             CadeiaInvalida,
+            NaoEhICPBrasil,
             NaoTemPessoaFisica
         }
 
@@ -30,11 +31,12 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoEhCnpj, "O certificado informado não é um e-CNPJ"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.PessoaFisicaInvalida, "Pessoa Física inválida"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.PessoaJuridicaInvalida, "Pessoa Jurídica inválida"));
-            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.ErroObterDadosPessoaFisica, "Erro ao obter dados da Pessoa Física"));
-            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.ErroObterDadosPessoaJuridica, "Erro ao Obter dados da Pessoa Jurídica"));
+            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.ErroObterDadosPessoaFisica, "ErroMensagem ao obter dados da Pessoa Física"));
+            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.ErroObterDadosPessoaJuridica, "ErroMensagem ao Obter dados da Pessoa Jurídica"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CertificadoExpirado, "Certificado está expirado ou ainda não é válido"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CertificadoInvalido, "Certificado inválido"));
-            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CadeiaInvalida, "Cadeia inválida ou não é ICP Brasil"));
+            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CadeiaInvalida, "Cadeia inválida"));
+            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoEhICPBrasil, "Não é ICP Brasil"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoTemPessoaFisica, "Certificado não tem pessoa física"));
         }
 
@@ -62,6 +64,11 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         public CertificadoException(CertificadoExceptionTipo tipoErro, Exception ex) : base(Hash[tipoErro], ex)
         {
             TipoErro = tipoErro;
+        }
+
+        public static string GetErrorMessage(CertificadoExceptionTipo tipoErro)
+        {
+            return Hash[tipoErro];
         }
     }
 }
