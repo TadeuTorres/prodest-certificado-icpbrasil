@@ -2,7 +2,7 @@ resources:
   repositories:
   - repository: testes
     type: git
-    name: Devops Tools/prodest-certificado-icpbrasil-testes
+    name: DevopsTools/prodest-certificado-icpbrasil-testes
 
 trigger:
 - main
