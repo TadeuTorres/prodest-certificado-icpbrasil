@@ -21,7 +21,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
             CertificadoExpirado,
             CertificadoInvalido,
             CadeiaInvalida,
-            NaoEhICPBrasil,
+            NaoEhIcpBrasil,
             NaoTemPessoaFisica
         }
 
@@ -36,7 +36,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CertificadoExpirado, "Certificado está expirado ou ainda não é válido"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CertificadoInvalido, "Certificado inválido"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.CadeiaInvalida, "Cadeia inválida"));
-            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoEhICPBrasil, "Não é ICP Brasil"));
+            Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoEhIcpBrasil, "Não é ICP Brasil"));
             Hash.Add(new KeyValuePair<CertificadoExceptionTipo, string>(CertificadoExceptionTipo.NaoTemPessoaFisica, "Certificado não tem pessoa física"));
         }
 

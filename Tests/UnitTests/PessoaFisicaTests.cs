@@ -37,12 +37,10 @@ namespace UnitTests
             // act
             // ReSharper disable once ObjectCreationAsStatement
             // ReSharper disable once AccessToDisposedClosure
-#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new PessoaFisica(
                 string.Empty
                 , "qualquerCoisa"
                 , "qualquerEmail");
-#pragma warning restore CA1806 // Do not ignore method results
 
             // assert
             act.Should().Throw<CertificadoException>()
@@ -57,12 +55,10 @@ namespace UnitTests
             // act
             // ReSharper disable once ObjectCreationAsStatement
             // ReSharper disable once AccessToDisposedClosure
-#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new PessoaFisica(
                 "qualquerNome"
                 , string.Empty
                 , "qualquerEmail");
-#pragma warning restore CA1806 // Do not ignore method results
 
             // assert
             act.Should().Throw<CertificadoException>()

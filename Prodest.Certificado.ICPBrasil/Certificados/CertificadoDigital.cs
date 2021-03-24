@@ -115,7 +115,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                 if (!IcpBrasil)
                 {
                     ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
-                        .NaoEhICPBrasil);
+                        .NaoEhIcpBrasil);
                     Erro = true;
                     return;
                 }

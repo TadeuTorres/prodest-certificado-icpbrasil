@@ -25,10 +25,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         }
     }
 
-#pragma warning disable S1939 // Inheritance list should not be redundant
-
     internal enum TagId
-#pragma warning restore S1939 // Inheritance list should not be redundant
     {
         Rfc822Name = 1,
         Integer = 2,
