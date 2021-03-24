@@ -57,3 +57,5 @@ bundle.css
 !/Tests/UnitTests/Context/Certificados/ListaParaValidar/Validos/cpf.pdf
 !/Tests/UnitTests/Context/Certificados/ListaParaValidar/Validos/teste.pdf
 /Tests/UnitTests/Context/Certificados/ListaParaValidar/Invalidos/*
+!/Tests/UnitTests/Context/Certificados/ListaParaValidar/Invalidos/paraCriarPasta.txt
+TestResults/

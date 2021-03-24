@@ -349,34 +349,13 @@ namespace UnitTests
 
             foreach (var file in invalidos)
             {
-                if (file.EndsWith(".pdf"))
-                {
-                    var buffer = ObterCertificadoFromPdf(file);
-                    using var certificado = new X509Certificate2(buffer);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeFalse();
-                }
-                else if (file.EndsWith(".pfx"))
-                {
-                    using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeFalse();
-                }
-                else
-                {
-                    using var certificado = new X509Certificate2(file);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeFalse();
-                }
+                if (!file.EndsWith(".pfx")) continue;
+                using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
+                // act
+                var result = CertificadoDigital.Processar(certificado, options);
+                // assert
+                result.Should().NotBeNull();
+                result.Erro.Should().BeFalse();
             }
         }
 
@@ -389,34 +368,13 @@ namespace UnitTests
 
             foreach (var file in invalidos)
             {
-                if (file.EndsWith(".pdf"))
-                {
-                    var buffer = ObterCertificadoFromPdf(file);
-                    using var certificado = new X509Certificate2(buffer);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeTrue();
-                }
-                else if (file.EndsWith(".pfx"))
-                {
-                    using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeTrue();
-                }
-                else
-                {
-                    using var certificado = new X509Certificate2(file);
-                    // act
-                    var result = CertificadoDigital.Processar(certificado, options);
-                    // assert
-                    result.Should().NotBeNull();
-                    result.Erro.Should().BeTrue();
-                }
+                if (!file.EndsWith(".pfx")) continue;
+                using var certificado = new X509Certificate2(file, PfxPassword, X509KeyStorageFlags.EphemeralKeySet);
+                // act
+                var result = CertificadoDigital.Processar(certificado, options);
+                // assert
+                result.Should().NotBeNull();
+                result.Erro.Should().BeTrue();
             }
         }
     }
