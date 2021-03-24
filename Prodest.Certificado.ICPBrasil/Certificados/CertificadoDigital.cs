@@ -45,13 +45,13 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
         //private const string OidPfRegistroServidorRh = "2.16.76.1.3.11"
 
         public TipoCertificado TipoCertificado { get; }
-        public bool IcpBrasil { get; }
-        public bool CadeiaValida { get; }
+        public bool IcpBrasil { get; private set; }
+        public bool CadeiaValida { get; private set; }
         public PessoaFisica? PessoaFisica { get; }
         public PessoaJuridica? PessoaJuridica { get; }
         public string? RawCertDataString { get; }
-        public bool Erro { get; }
-        public string? ErroMensagem { get; }
+        public bool Erro { get; private set; }
+        public string? ErroMensagem { get; private set; }
 
         private CertificadoDigital(X509Certificate2 certificado, CertificadoDigitalOptions options)
         {
@@ -68,58 +68,7 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                 return;
             }
 
-            if (options.ValidarCadeia)
-            {
-                using var store = new X509Store(StoreName.Root, StoreLocation.CurrentUser);
-                store.Open(OpenFlags.ReadOnly);
-
-                var raizesIcpBrasil = store.Certificates.Find(X509FindType.FindByIssuerName, RaizIcpBrasil, true);
-
-                using (var chain = new X509Chain())
-                {
-                    if (options.ValidarRevogacao)
-                    {
-                        chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
-                    }
-                    else
-                    {
-                        chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                    }
-
-                    if (chain.Build(certificado))
-                    {
-                        CadeiaValida = true;
-                    }
-                    else if (chain.ChainStatus.Any(x => x.Status == X509ChainStatusFlags.NotTimeValid) && options.ValidarRevogacao)
-                    {
-                        ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
-                            .CertificadoExpirado);
-                        Erro = true;
-                        return;
-                    }
-                    else if (
-                        (options.ValidarRaizConfiavel && chain.ChainStatus.Any(x => x.Status != X509ChainStatusFlags.NotTimeValid))
-                        || (!options.ValidarRaizConfiavel && chain.ChainStatus.Any(x => x.Status != X509ChainStatusFlags.NotTimeValid
-                                                                                          && x.Status != X509ChainStatusFlags.UntrustedRoot)))
-                    {
-                        ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
-                            .CadeiaInvalida);
-                        Erro = true;
-                        return;
-                    }
-
-                    var certificadoRaiz = chain.ChainElements[^1].Certificate;
-                    IcpBrasil = raizesIcpBrasil.Contains(certificadoRaiz);
-                }
-
-                if (!IcpBrasil)
-                {
-                    ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
-                        .NaoEhIcpBrasil);
-                    Erro = true;
-                    return;
-                }
-            }
+            if (options.ValidarCadeia && CadeiaInvalida(certificado, options)) return;
 
             TipoCertificado = ObterTipo(certificado);
             switch (TipoCertificado)
@@ -134,6 +83,58 @@ namespace Prodest.Certificado.ICPBrasil.Certificados
                     PessoaFisica = pessoaFisica;
                     break;
             }
+        }
+
+        private bool CadeiaInvalida(X509Certificate2 certificado, CertificadoDigitalOptions options)
+        {
+            using var store = new X509Store(StoreName.Root, StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadOnly);
+
+            var raizesIcpBrasil = store.Certificates.Find(X509FindType.FindByIssuerName, RaizIcpBrasil, true);
+
+            using (var chain = new X509Chain())
+            {
+                if (options.ValidarRevogacao)
+                {
+                    chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+                }
+                else
+                {
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                }
+
+                if (chain.Build(certificado))
+                {
+                    CadeiaValida = true;
+                }
+                else if (chain.ChainStatus.Any(x => x.Status == X509ChainStatusFlags.NotTimeValid) && options.ValidarRevogacao)
+                {
+                    ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                        .CertificadoExpirado);
+                    Erro = true;
+                    return true;
+                }
+                else if (
+                    (options.ValidarRaizConfiavel && chain.ChainStatus.Any(x => x.Status != X509ChainStatusFlags.NotTimeValid))
+                    || (!options.ValidarRaizConfiavel && chain.ChainStatus.Any(x =>
+                        x.Status != X509ChainStatusFlags.NotTimeValid
+                        && x.Status != X509ChainStatusFlags.UntrustedRoot)))
+                {
+                    ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                        .CadeiaInvalida);
+                    Erro = true;
+                    return true;
+                }
+
+                var certificadoRaiz = chain.ChainElements[^1].Certificate;
+                IcpBrasil = raizesIcpBrasil.Contains(certificadoRaiz);
+            }
+
+            if (IcpBrasil) return false;
+            ErroMensagem = CertificadoException.GetErrorMessage(CertificadoException.CertificadoExceptionTipo
+                .NaoEhIcpBrasil);
+            Erro = true;
+            return true;
         }
 
         private static TipoCertificado ObterTipo(X509Certificate2 certificado)
