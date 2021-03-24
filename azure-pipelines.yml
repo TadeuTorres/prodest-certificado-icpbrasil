@@ -1,18 +1,109 @@
+resources:
+  repositories:
+  - repository: testes
+    type: git
+    name: Devops Tools/prodest-certificado-icpbrasil-testes
+
 trigger:
-- master
+- main
 - prerelease
+- develop
 
 variables:
-  buildConfiguration: 'Release'
-  Major: 0
-  Minor: 1
-  PatchForPreRelease: 0
-  TypeForPreRelease: ''
-  Versao: $[format('{0}.{1}', variables['Major'], variables['Minor'])]
-  
+- group: SonarQube
+- name: buildConfiguration
+  value: 'Release'
+- name: Major
+  value: '0'
+- name: Minor
+  value: '1'
+- name: PatchForPreRelease
+  value: '0'
+- name: TypeForPreRelease
+  value: ''
+- name: Versao
+  value: $[format('{0}.{1}', variables['Major'], variables['Minor'])]
+- name: disable.coverage.autogenerate
+  value: 'true'
 
 stages:
+- stage: BuildStage
+  jobs:
+    - job: BuildSonar
+      displayName: Build And Quality
+      steps:
+        - checkout: self
+          path: s
+        - checkout: testes
+          path: testes
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: '..\testes\ListaParaValidar\'
+            Contents: '**'
+            TargetFolder: 'Tests\UnitTests\Context\Certificados\ListaParaValidar\'
+        - task: PowerShell@2
+          displayName: dotnet-sonarscanner begin
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet tool install --global dotnet-sonarscanner
+              dotnet sonarscanner begin /k:"$(Build.Repository.Name)" /d:sonar.host.url="$(SonarUrl)" /d:sonar.login="$(SonarToken)" /d:sonar.scanner.metadataFilePath="$(System.DefaultWorkingDirectory)\sonar\$(Build.BuildNumber)\$(Build.Repository.Name)\sonarqube\TaskReport\report-task.txt" /d:sonar.cs.opencover.reportsPaths="$(System.DefaultWorkingDirectory)/**/coverage.opencover.xml" /d:sonar.verbose=true
+        - task: PowerShell@2
+          displayName: dotnet restore
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet restore
+        - task: PowerShell@2
+          displayName: dotnet build
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet build --configuration $(BuildConfiguration) --no-restore
+        - task: PowerShell@2
+          displayName: dotnet test
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet test --configuration $(BuildConfiguration) --no-restore --no-build --results-directory TestResults --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        - task: PublishTestResults@2
+          displayName: publish test results
+          inputs:
+            testResultsFormat: 'VSTest'
+            testResultsFiles: '**/*.trx'
+        - task: PowerShell@2
+          displayName: report generator
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet $env:USERPROFILE\.nuget\packages\reportgenerator\4.8.7\tools\netcoreapp3.0\ReportGenerator.dll "-reports:**/coverage.opencover.xml" "-targetdir:coverage/Cobertura" "-reporttypes:Cobertura;HtmlInline_AzurePipelines_Dark;"
+        - task: PublishCodeCoverageResults@1
+          displayName: publish code coverage
+          inputs:
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/Cobertura/Cobertura.xml'
+            reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/Cobertura'
+        - task: PowerShell@2
+          displayName: dotnet publish
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet publish Prodest.Certificado.ICPBrasil\Prodest.Certificado.ICPBrasil.csproj --no-restore --no-build --configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)
+        - task: PublishBuildArtifacts@1
+          displayName: publish build artifacts
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
+        - task: PowerShell@2
+          displayName: dotnet-sonarscanner end
+          inputs:
+            targetType: 'inline'
+            script: 'dotnet sonarscanner end /d:sonar.login="$(SonarToken)"'
+
 - stage: PreparacaoStage
+  dependsOn: BuildStage
+  condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.SourceBranch'], 'refs/heads/prerelease'))
   jobs:
   - job: SetarShortGitHashJob
     displayName: Setar Short GitHash
@@ -24,7 +115,7 @@ stages:
         name: SetarShortGitHashStep
   - job: SetarPatchForMain
     dependsOn: SetarShortGitHashJob
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     displayName: Setar Patch For Main
     variables:
        shortGitHash: $[dependencies.SetarShortGitHashJob.outputs['SetarShortGitHashStep.ShortGitHash']]
@@ -35,7 +126,7 @@ stages:
           echo $(patch)
           echo $(Versao)
           echo '##vso[task.setvariable variable=Patch;isOutput=true]$(patch)
-        name: SetVersaoMasterStep
+        name: SetVersaoMainStep
   - job: SetarPatchForPreRelease
     dependsOn: SetarShortGitHashJob
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/prerelease')
@@ -63,7 +154,7 @@ stages:
     condition: or(succeeded('SetarPatchForPreRelease'), succeeded('SetarPatchForMain'))
     displayName: Setar Versão Atual
     variables:
-       PatchTempMain: $[dependencies.SetarPatchForMain.outputs['SetVersaoMasterStep.Patch']]
+       PatchTempMain: $[dependencies.SetarPatchForMain.outputs['SetVersaoMainStep.Patch']]
        PatchTempRelease: $[dependencies.SetarPatchForPreRelease.outputs['SetVersaoReleaseStep.Patch']]
     steps:
       - script: |
@@ -76,6 +167,7 @@ stages:
 - stage: PackAndPushStage
   displayName: PackAndPushStage
   dependsOn: PreparacaoStage
+  condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.SourceBranch'], 'refs/heads/prerelease'))
   jobs:
   - job: PackAndPushJob
     variables:
@@ -94,4 +186,4 @@ stages:
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
           nuGetFeedType: 'external'
           publishFeedCredentials: 'NugetCertificadoIcpBrasil'
-        name: Push
+        name: Push      
