@@ -1,16 +1,16 @@
-# Prodest.Certificados.ICPBrasil
+Ôªø# Prodest.Certificados.ICPBrasil
 
-Biblioteca para manipulaÁ„o de certificados digitais ICP-Brasil em .NET
+Biblioteca para manipula√ß√£o de certificados digitais ICP-Brasil em .NET
 
-baseado no cÛdigo disponÌvel em: https://github.com/pbozzi/certificado-net
+baseado no c√≥digo dispon√≠vel em: https://github.com/pbozzi/certificado-net
 
-## InstalaÁ„o
+## Instala√ß√£o
 
 ```
 PM> Install-Package Prodest.Certificados.ICPBrasil
 ```
 
-## Uso b·sico
+## Uso b√°sico
 
 ```csharp
 using Prodest.Certificado.ICPBrasil.Certificados;
@@ -22,7 +22,7 @@ var options = new CertificadoDigitalOptions();
 var icpBrasil = CertificadoDigital.Processar(certificado, options);
 ```
 
-## OpÁıes
+## Op√ß√µes
 
 ```csharp
 var options = new CertificadoDigitalOptions(){
@@ -32,8 +32,8 @@ var options = new CertificadoDigitalOptions(){
 };
 ```
 
-Caso vocÍ n„o queira validar a cadeia do certificado sendo analisado, vocÍ pode usar a opÁ„o **ValidarCadeia**. Essa opÁ„o sÛ deve ser desligada quando est· sendo usado um certificado n„o IcpBrasil e queremos analisar se a estrutura de e-Cpf e e-Cnpj est· funcionando de maneira correta. As outras opÁıes n„o s„o avaliadas caso essa validaÁ„o seja desligada.
+Caso voc√™ n√£o queira validar a cadeia do certificado sendo analisado, voc√™ pode usar a op√ß√£o **ValidarCadeia**. Essa op√ß√£o s√≥ deve ser desligada quando est√° sendo usado um certificado n√£o IcpBrasil e queremos analisar se a estrutura de e-Cpf e e-Cnpj est√° funcionando de maneira correta. As outras op√ß√µes n√£o s√£o avaliadas caso essa valida√ß√£o seja desligada.
 
-A opÁ„o de **ValidarRevogacao** quando desligada usa um RevocationMode = X509RevocationMode.NoCheck e portanto n„o verifica se os certificados da cadeia sendo analisada foram revogados. Quando a opÁ„o est· ligada o RevocationFlag È X509RevocationFlag.EntireChain.
+A op√ß√£o de **ValidarRevogacao** quando desligada usa um RevocationMode = X509RevocationMode.NoCheck e portanto n√£o verifica se os certificados da cadeia sendo analisada foram revogados. Quando a op√ß√£o est√° ligada o RevocationFlag √© X509RevocationFlag.EntireChain.
 
-A ˙ltima opÁ„o **ValidarRaizConfiavel** verifica se a raiz inicial È um dos certificados raiz do ICP-Brasil. Esse certificado deve estar instalado na m·quina que est· fazendo essa verificaÁ„o.
+A √∫ltima op√ß√£o **ValidarRaizConfiavel** verifica se a raiz inicial √© um dos certificados raiz do ICP-Brasil. Esse certificado deve estar instalado na m√°quina que est√° fazendo essa verifica√ß√£o.
