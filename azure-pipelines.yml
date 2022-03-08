@@ -13,5 +13,5 @@ stages:
     parameters:
       Major: 0
       Minor: 1
-      PatchAtual: 1
+      PatchAtual: 2
       LibraryName: Certificado.ICPBrasil
